@@ -3,13 +3,23 @@ class UltraSonicSensor{
         const double SOUND_VELOCITY = 0.034;
         const double CM_TO_INCH = 0.393701;
 
-        int TRIGGER_PIN;
-        int ECHO_PIN;
-
+        int TRIGGER_PIN, ECHO_PIN;
         long DURATION;
+
+        unsigned long PREVIOUS_MILLIS = 0;
+        const long INTERVAL = 500;  
 
     public:
         UltraSonicSensor* getCurrentValue(){
+            unsigned long currentMillis = millis();
+
+            // Wait for interval before sending out new sound wave
+            if (currentMillis - PREVIOUS_MILLIS < INTERVAL) {
+                return this;
+            }
+
+            PREVIOUS_MILLIS = currentMillis;
+
             // Clears the trigPin
             digitalWrite(this->TRIGGER_PIN, LOW);
             delayMicroseconds(2);
